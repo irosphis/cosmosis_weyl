@@ -9,7 +9,7 @@ def setup(options):
     return []
     
 def execute(block, config):
-    # Getting Plin at z=zstar
+    # Getting Plin at z=zstar 可以直接提取，因为lin的是没有修改过的
     Plin_star=block[names.matter_power_lin,"P_K"][-1,:]
    
     # Getting sigma8 at z=zstar
@@ -21,20 +21,20 @@ def execute(block, config):
     # Replacing Plin(k,z=0) by the effective spectra
     block[names.matter_power_lin,"P_K"] = Peff
 
-    # Getting the boost from the datablock
+    # Getting the boost from the datablock 这里自然不要去要Pk_nl了
     B=block[names.matter_power_nl,"B"]
     
-    # Replacing the effective nl spectra
+    # Replacing the effective nl spectra 这个B是在GGL模块中进行过保存的原始B
     Peff2 = B*Plin_star/sig8_star**2
     block[names.matter_power_nl,"P_K"] = Peff2
     
     #Printing bhat fiducials using b=1
-    z=block[names.matter_power_nl,"z"]
-    print('zstar',z[-1])
-    sig8_z=block[names.growth_parameters,"sigma_8"]
-    bhat_z=1*sig8_z
-    bhat_func=interp1d(z,bhat_z)
+    # z=block[names.matter_power_nl,"z"]
+    #print('zstar',z[-1])
+    # sig8_z=block[names.growth_parameters,"sigma_8"]
+    # bhat_z=1*sig8_z
+    # bhat_func=interp1d(z,bhat_z)
     #print('bhat fiducials',bhat_func([0.2946683204029144, 0.46670347176087024, 0.626278460689437, 0.771314100934901,0.9,1.0]))
-    print('bhat fiducials:',bhat_func([0.2796,0.4367,0.5795,0.7271,0.8486]))
+    #print('bhat fiducials:',bhat_func([0.2796,0.4367,0.5795,0.7271,0.8486]))
     
     return 0

@@ -1,0 +1,11 @@
+.env/
+output/
+conda-env/
+.vscode/
+kcap/
+kcap_boss_module/
+cosmosis-standard-library/
+__pycache__/
+chains/
+*.fits
+*.hdf5

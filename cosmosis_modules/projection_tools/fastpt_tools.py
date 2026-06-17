@@ -11,7 +11,7 @@ from scipy.interpolate import InterpolatedUnivariateSpline as intspline
 from scipy.interpolate import RectBivariateSpline
 
 from fastpt import FASTPT as FASTPT
-from fastpt.P_extend import k_extend
+from fastpt.utils.P_extend import k_extend
 
 from cosmosis.datablock import names
 

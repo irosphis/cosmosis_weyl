@@ -353,9 +353,9 @@ class Spectrum(object):
         ell: float array
             np.array of ell values at which to calculate C(l)
         bin1: int
-            first tomographic bin index (starting from 1)
+            first tomographic bin index (starting from 1) 第一个透镜红移bin的下标
         bin2: int
-            second tomographic bin index (starting from 2)
+            second tomographic bin index (starting from 2) 第二个透镜红移bin的下标
         dchi: float
             spacing in dchi at which to compute integral
         sig_over_dchi: float
@@ -1630,7 +1630,7 @@ class SpectrumCalculator(object):
         block[spectrum.section_name, 'auto_only'] = (
             spectrum.section_name in self.auto_only_section_names)
 
-        # Set up nay required power splines
+        # Set up any required power splines
         spectrum.prepare(block, lin_bias_prefix=self.lin_bias_prefix)
 
         if self.verbose:

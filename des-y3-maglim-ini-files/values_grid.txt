@@ -1,0 +1,84 @@
+[cosmological_parameters]
+; 所有参数固定为最佳拟合值/中心值
+omega_m      = 0.3166
+h0           = 0.6727
+omega_b      = 0.0494116
+n_s          = 0.9649
+A_s          = 2.101e-9
+w            = -1.0
+mnu          = 0.06
+num_massive_neutrinos = 1
+nnu          = 3.046
+omega_k      = 0.0
+tau          = 0.0544
+
+[shear_calibration_parameters]
+; 剪切校准通常固定为 0 进行测试
+m1 = 0.0
+m2 = 0.0
+m3 = 0.0
+m4 = 0.0
+
+[wl_photoz_errors]
+; 光度红移偏差固定为 0
+bias_1 = 0.0
+bias_2 = 0.0
+bias_3 = 0.0
+bias_4 = 0.0
+
+[intrinsic_alignment_parameters]
+; 固有对齐固定为 0 (或者你之前的最佳拟合值)
+A = 0.0
+alpha = 0.0
+z0 = 0.62
+
+[lens_photoz_errors]
+bias_1 = 0.0
+bias_2 = 0.0
+bias_3 = 0.0
+bias_4 = 0.0
+bias_5 = 0.0
+bias_6 = 0.0
+width_1 = 1.0
+width_2 = 1.0
+width_3 = 1.0
+width_4 = 1.0
+width_5 = 1.0
+width_6 = 1.0
+
+[bias_lens]
+b1 = 1.0
+b2 = 1.0
+b3 = 1.0
+b4 = 1.0
+b5 = 1.0
+b6 = 1.0
+
+[J_bin_bias]
+; Jhat 固定为你提供的中心值
+Jhat1 = 0.32
+Jhat2 = 0.333
+Jhat3 = 0.387
+Jhat4 = 0.354
+Jhat5 = 0.39186187
+Jhat6 = 0.38805592
+
+[My_J_bin_bias]
+mg_A = -1 0.0 2  
+
+[b_bin_bias]
+; bhat 固定为你提供的中心值
+bhat1 = 1.0418395
+bhat2 = 1.14332584
+bhat3 = 1.05551404
+bhat4 = 1.03908743
+bhat5 = 1.18540172
+bhat6 = 1.13384482
+
+[mag_alpha_lens]
+alpha_1 = 1.21
+alpha_2 = 1.15
+alpha_3 = 1.88 
+alpha_4 = 1.97 
+alpha_5 = 1.78
+alpha_6 = 2.48
