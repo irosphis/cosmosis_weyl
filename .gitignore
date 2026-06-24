@@ -6,6 +6,9 @@ kcap/
 kcap_boss_module/
 cosmosis-standard-library/
 __pycache__/
-chains/
+/chains/
+MyTest/chains/*
+!MyTest/chains/chain_noprior.txt
+!MyTest/chains/chain_withprior.txt
 *.fits
 *.hdf5
