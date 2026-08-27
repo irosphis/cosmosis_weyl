@@ -3,7 +3,7 @@ from getdist import MCSamples
 
 def load_mc(f_path, lbl, cfg):
     with open(f_path, 'r') as f: cols = f.readline().replace('#', '').strip().split()
-    df = pd.read_csv(f_path, sep='\s+', comment='#', names=[c.lower() for c in cols]).dropna()
+    df = pd.read_csv(f_path, sep=r'\s+', comment='#', names=[c.lower() for c in cols]).dropna()
     d = [e(df) if callable(e) else df[e.lower()].values for r, s, n, e in cfg if r != "-"]
     n =[n for r, s, n, e in cfg if r != "-"]
     return MCSamples(samples=np.column_stack(d), weights=np.exp(df['log_weight']-df['log_weight'].max()).values, names=n, label=lbl)
@@ -20,8 +20,7 @@ def fmt(s, d=3):
 
 if __name__ == '__main__':
     from pathlib import Path
-    import os
-    os.chdir(Path(__file__).resolve().parent)
+    root = Path(__file__).resolve().parent.parent
     
     cfg =[
         ("Matter density parameter", r"$\Omega_m$", "Om", "cosmological_parameters--omega_m"),
@@ -40,8 +39,8 @@ if __name__ == '__main__':
         ("Growth rate (CMASS)", r"$f\sigma_8(z_2)$", "fs82", "lss_parameters--fsigma_8_bin_2")
     ]
 
-    st_np = load_mc('chains/chain_noprior.txt', 'No Prior', cfg).getMargeStats()
-    st_p = load_mc('chains/chain_withprior.txt', 'With Prior', cfg).getMargeStats()
+    st_np = load_mc(root / 'MyTest/chains/chain_noprior.txt', 'No Prior', cfg).getMargeStats()
+    st_p = load_mc(root / 'MyTest/chains/chain_withprior.txt', 'With Prior', cfg).getMargeStats()
 
     for r, sym, n, e in cfg:
         if r == "-": print("        \\midrule")

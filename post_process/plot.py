@@ -6,7 +6,7 @@ from getdist import plots, MCSamples
 def process_chain(file_path, label_name, z1=0.38, z2=0.61):
     with open(file_path, 'r') as f:
         header = f.readline().replace('#', '').strip().split()
-    df = pd.read_csv(file_path, sep='\s+', comment='#', names=header)
+    df = pd.read_csv(file_path, sep=r'\s+', comment='#', names=header)
     df = df.dropna()
     log_w = df['log_weight'].values
     weights = np.exp(log_w - np.max(log_w))
@@ -37,10 +37,9 @@ def process_chain(file_path, label_name, z1=0.38, z2=0.61):
 
 if __name__ == '__main__':
     from pathlib import Path
-    import os
-    os.chdir(Path(__file__).resolve().parent)
-    samples_no_prior = process_chain('chains/chain_noprior.txt', 'KiDS-1000+BOSS+2dFlenS (No Prior)')
-    samples_with_prior = process_chain('chains/chain_withprior.txt', 'KiDS-1000+BOSS+2dFlenS (With Prior)')
+    root = Path(__file__).resolve().parent.parent
+    samples_no_prior = process_chain(root / 'MyTest/chains/chain_noprior.txt', 'KiDS-1000+BOSS+2dFlenS (No Prior)')
+    samples_with_prior = process_chain(root / 'MyTest/chains/chain_withprior.txt', 'KiDS-1000+BOSS+2dFlenS (With Prior)')
 
     g = plots.get_subplot_plotter()
     g.settings.axes_fontsize = 14
@@ -77,5 +76,5 @@ if __name__ == '__main__':
         ax.text(0.5, 1.02, f"${line_with}$", color='#006eb8', 
                 transform=ax.transAxes, ha='center', va='bottom', fontsize=11)
     plt.subplots_adjust(wspace=0.1, hspace=0.1, top=0.9)
-    plt.savefig('fig/comparison_noprior_vs_withprior.pdf', bbox_inches='tight')
+    plt.savefig(root / 'MyTest/fig/comparison_noprior_vs_withprior.pdf', bbox_inches='tight')
     plt.show()
