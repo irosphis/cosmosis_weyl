@@ -15,7 +15,7 @@ from scipy.special import hyp2f1, logsumexp
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-OUT = ROOT / "paper/weyl_paper-main/Img"
+OUT = ROOT / "figures"
 WITH_PATH = ROOT / "chain/chain_explicit_zstar_with_planck_nautilus.txt"
 NO_PATH = ROOT / "chain/chain_explicit_zstar_no_planck_nautilus.txt"
 

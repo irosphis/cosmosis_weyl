@@ -1,0 +1,366 @@
+diff --git a/CosmoMC_BOSS/source/CosmologyTypes.f90 b/CosmoMC_BOSS/source/CosmologyTypes.f90
+index 3a866f3..105dae2 100644
+--- a/CosmoMC_BOSS/source/CosmologyTypes.f90
++++ b/CosmoMC_BOSS/source/CosmologyTypes.f90
+@@ -70,6 +70,8 @@
+         logical :: bbn_consistency = .true. !JH
+ 
+         logical :: use_growth = .false. !AGS, to use gamma as a free parameter
++        logical :: use_fhat = .false. !Use an independent f*sigma8 in each redshift bin
++        logical :: use_zstar = .false. !Input P_lin is Q_star=P_lin(z_star)/sigma8(z_star)^2
+         logical :: local_lag_g2 = .true. !AGS, assume local-Lagrangian relation to set gamma2
+         logical :: local_lag_g3 = .false. !AGS, assume local-Lagrangian relation to set gamma3^-
+ 
+@@ -232,6 +234,8 @@
+     call Ini%Read('inflation_consistency',this%inflation_consistency)
+     call Ini%Read('bbn_consistency',this%bbn_consistency)
+     call Ini%Read('use_growth',this%use_growth)  !AGS: use gamma as a free parameter
++    call Ini%Read('use_fhat',this%use_fhat)
++    call Ini%Read('use_zstar',this%use_zstar)
+     call Ini%Read('local_lag_g2',this%local_lag_g2)    !AGS: assume logal-Lagrangian relation for gamma2
+     call Ini%Read('local_lag_g3',this%local_lag_g3)    !AGS: assume logal-Lagrangian relation for gamma3^-
+ 
+diff --git a/CosmoMC_BOSS/source/twopt_likelihood.f90 b/CosmoMC_BOSS/source/twopt_likelihood.f90
+index 33ebc41..d02a765 100644
+--- a/CosmoMC_BOSS/source/twopt_likelihood.f90
++++ b/CosmoMC_BOSS/source/twopt_likelihood.f90
+@@ -144,7 +144,21 @@
+       a_vir = DataParams(5)
+       f  = Theory%growth_z%value(model%redshift)/Theory%sigma8_z%Value(model%redshift)
+       A_fast = (Theory%sigma8_z%Value(model%redshift)/Theory%sigma8_z%Value(NLRSD_redshift))**2
+-      if(CosmoSettings%use_growth)then
++      if(CosmoSettings%use_zstar)then
++         !The supplied spectrum is Q_star=P_lin(z_star)/sigma8(z_star)^2.
++         !gRPT's linear and one-loop pieces scale as A_fast and A_fast^2,
++         !so this restores the reference late-time amplitude at this bin.
++         A_fast = Theory%sigma8_z%Value(model%redshift)**2
++      end if
++      if(CosmoSettings%use_fhat)then
++         !DataParams(6) is fhat=f*sigma8 in this mode.  A_fast deliberately
++         !keeps the reference nonlinear evolution in the simple hatted model.
++         if(Theory%sigma8_z%Value(model%redshift) <= 0._mcp)then
++            write(*,*) 'ERROR: sigma8(z) must be positive in use_fhat mode.'
++            call MPIstop()
++         end if
++         f = DataParams(6)/Theory%sigma8_z%Value(model%redshift)
++      else if(CosmoSettings%use_growth)then
+          CMB2 = CMB
+          !redefine f as omega_m(z)**gamma
+          om_z = (CMB%omdm+CMB%omb)*(1._mcp + model%redshift)**3/hub**2 
+@@ -403,4 +417,3 @@ module twoptlikelihood
+     end subroutine twopt_Likelihood_Add
+ 
+ end module twoptlikelihood
+-
+diff --git a/python_interface/Makefile b/python_interface/Makefile
+index 9e76b08..b30a7af 100644
+--- a/python_interface/Makefile
++++ b/python_interface/Makefile
+@@ -23,14 +23,18 @@ DEBUGFLAGS = -fpp -qopenmp -g -check all -check noarg_temp_created -traceback -f
+ MODOUT = -module $(BUILD_DIR)
+ DEBUG_MODOUT = -module $(DEBUG_BUILD_DIR)
+ else
+-FFLAGS =  -fPIC -cpp -fopenmp -O3 -ffree-line-length-none -std=f2008
++FFLAGS =  -fPIC -cpp -fopenmp -O3 -ffree-line-length-none -std=f2008 -fallow-argument-mismatch
+ DEBUGFLAGS = -g -O0 -fcheck=all -fbacktrace -cpp -fdec -fopenmp -ffree-line-length-none
+ #add -fpe0 to check for floating point errors (think lowLike also throws these harmlessly)
+ MODOUT = -J$(BUILD_DIR)
+ DEBUG_MODOUT = -J$(DEBUG_BUILD_DIR)
+ endif
+ 
++ifeq ($(strip ${LAPACK_LINK}),)
++LAPACKL = -llapack -lblas
++else
+ LAPACKL = ${LAPACK_LINK}
++endif
+ CUBALIB = ../Cuba-1.4/libcuba.a
+ 
+ LDFLAGS = ${CUBALIB} ${LAPACKL}
+diff --git a/python_interface/bias_module.f90 b/python_interface/bias_module.f90
+index c1425f3..bb1d3c3 100644
+--- a/python_interface/bias_module.f90
++++ b/python_interface/bias_module.f90
+@@ -102,13 +102,14 @@ module bias_module
+         end subroutine cleanup_cosmology
+ 
+         subroutine setup_cosmology(h, omdm, omb, omv, omk, omnuh2, nnu, w, wa, & !CMB params
+-                                   use_growth, local_lag_g2, local_lag_g3, &
++                                   use_growth, use_fhat, use_zstar, local_lag_g2, local_lag_g3, &
+                                    Pk_z, n_Pk_z, Pk_log_k, n_Pk_log_k, Pk, n_Pk_x, n_Pk_y, &
+                                    growth_z, n_growth_z, sigma8_z, n_sigma8_z, &
+                                    verbose) bind(c, name="setup_cosmology")
+             real(kind=c_double), intent(in)  :: h, omdm, omb, omv, omk, omnuh2, nnu, w, wa
+             
+-            logical(kind=c_bool), intent(in) :: use_growth, local_lag_g2, local_lag_g3
++            logical(kind=c_bool), intent(in) :: use_growth, use_fhat, use_zstar
++            logical(kind=c_bool), intent(in) :: local_lag_g2, local_lag_g3
+ 
+             integer(kind=c_int), intent(in)  :: n_Pk_z, n_Pk_log_k, n_Pk_x, n_Pk_y
+             real(kind=c_double), intent(in)  :: Pk_z(n_Pk_z), Pk_log_k(n_Pk_log_k)
+@@ -173,6 +174,8 @@ module bias_module
+ 
+             ! CosmoSettings (need to set z_outputs?)
+             CosmoSettings%use_growth = use_growth
++            CosmoSettings%use_fhat = use_fhat
++            CosmoSettings%use_zstar = use_zstar
+             CosmoSettings%local_lag_g2 = local_lag_g2
+             CosmoSettings%local_lag_g3 = local_lag_g3
+         end subroutine setup_cosmology
+@@ -268,4 +271,4 @@ module bias_module
+             end do
+ 
+         end subroutine compute_wedges
+-end module bias_module
+\ No newline at end of file
++end module bias_module
+diff --git a/python_interface/bias_module.py b/python_interface/bias_module.py
+index fd3e227..dc71462 100644
+--- a/python_interface/bias_module.py
++++ b/python_interface/bias_module.py
+@@ -66,7 +66,8 @@ class BiasModule:
+         f()
+ 
+     def setup_cosmology(self, h, omdm, omb, omv, omk, omnuh2, nnu, w, wa,
+-                              use_growth, local_lag_g2, local_lag_g3, 
++                              use_growth, use_fhat, use_zstar,
++                              local_lag_g2, local_lag_g3,
+                               z, log_k, Pk, 
+                               growth_z, sigma8_z, 
+                               verbose=True):
+@@ -82,6 +83,8 @@ class BiasModule:
+                       ct.POINTER(ct.c_double),     # w
+                       ct.POINTER(ct.c_double),     # wa
+                       ct.POINTER(ct.c_bool),       # use_growth
++                      ct.POINTER(ct.c_bool),       # use_fhat
++                      ct.POINTER(ct.c_bool),       # use_zstar
+                       ct.POINTER(ct.c_bool),       # local_lag_g2
+                       ct.POINTER(ct.c_bool),       # local_lag_g3
+                       *array_ctype(ndim=1, dtype=np.float64), # Pk_z
+@@ -94,7 +97,8 @@ class BiasModule:
+ 
+         f(ct.c_double(h), ct.c_double(omdm), ct.c_double(omb), ct.c_double(omv), ct.c_double(omk),
+           ct.c_double(omnuh2), ct.c_double(nnu), ct.c_double(w), ct.c_double(wa),
+-          ct.c_bool(use_growth), ct.c_bool(local_lag_g2), ct.c_bool(local_lag_g3), 
++          ct.c_bool(use_growth), ct.c_bool(use_fhat), ct.c_bool(use_zstar),
++          ct.c_bool(local_lag_g2), ct.c_bool(local_lag_g3),
+           *array_arg(z),
+           *array_arg(log_k),
+           *array_arg(np.asfortranarray(Pk)),
+@@ -185,7 +189,9 @@ if __name__ == "__main__":
+     om_fid = 0.31000000000000000     
+     h0_fid = 0.69999999999999996
+ 
+-    use_growth = False 
++    use_growth = False
++    use_fhat = False
++    use_zstar = False
+     local_lag_g2 = True 
+     local_lag_g3 = False
+ 
+@@ -209,7 +215,8 @@ if __name__ == "__main__":
+                                        window, verbose=True)
+ 
+     mod.setup_cosmology(h, omdm, omb, omv, omk, omnuh2, nnu, w, wa,
+-                        use_growth, local_lag_g2, local_lag_g3,
++                        use_growth, use_fhat, use_zstar,
++                        local_lag_g2, local_lag_g3,
+                         z, log_k, Pk, 
+                         growth_z, sigma8_z)
+ 
+diff --git a/python_interface/cosmosis_module.py b/python_interface/cosmosis_module.py
+index 6d46543..971fa1c 100644
+--- a/python_interface/cosmosis_module.py
++++ b/python_interface/cosmosis_module.py
+@@ -27,6 +27,9 @@ def setup(options):
+     config["timeout"] = options.get_double(option_section, "timeout", default=-1.0)
+     if config["timeout"] <= 0:
+         config["timeout"] = None
++    config["fork_wedges"] = options.get_bool(
++        option_section, "fork_wedges", default=True
++    )
+ 
+     try:
+         bands_range = options[option_section, "bands_range"]
+@@ -75,6 +78,15 @@ def setup(options):
+     config["h0_fid"] = 0.7
+ 
+     config["use_growth"] = options.get_bool(option_section, "use_growth", False)
++    config["use_fhat"] = options.get_bool(option_section, "use_fhat", False)
++    config["use_zstar"] = options.get_bool(option_section, "use_zstar", False)
++    config["fhat_section"] = options.get_string(
++        option_section, "fhat_section", "growth_amplitudes"
++    )
++    if config["use_growth"] and config["use_fhat"]:
++        raise ValueError("wedges: use_growth and use_fhat cannot both be true")
++    if config["use_zstar"] and not config["use_fhat"]:
++        raise ValueError("wedges: use_zstar requires use_fhat=T")
+     config["local_lag_g2"] = options.get_bool(option_section, "local_lag_g2", True)
+     config["local_lag_g3"] = options.get_bool(option_section, "local_lag_g3", False)
+ 
+@@ -108,7 +120,9 @@ def run_wedges(q, config,
+ 
+     # Setup cosmology
+     module.setup_cosmology(h, omdm, omb, omv, omk, omnuh2, nnu, w, wa, 
+-                                     config["use_growth"], config["local_lag_g2"], config["local_lag_g3"],
++                                     config["use_growth"], config["use_fhat"],
++                                     config["use_zstar"],
++                                     config["local_lag_g2"], config["local_lag_g3"],
+                                      z_Pk, log_k_h, log_Pk.T,
+                                      growth, sigma8, verbose=config["verbose"])
+ 
+@@ -132,7 +146,20 @@ def run_wedges(q, config,
+     
+     module.cleanup_cosmology()
+ 
+-    q.put(results)
++    if q is not None:
++        q.put(results)
++    return results
++
++
++def _stop_wedges_process(proc):
++    """Reap a wedges subprocess without leaving MPI workers or zombies behind."""
++    proc.join(0.5)
++    if proc.is_alive():
++        proc.terminate()
++        proc.join(0.5)
++    if proc.is_alive():
++        proc.kill()
++        proc.join()
+ 
+ 
+ def execute(block, config):
+@@ -147,9 +174,11 @@ def execute(block, config):
+     wa = block[names.cosmological_parameters, "wa"]
+ 
+     if config["use_growth"]:
+-        gamma = block["bias_parameters", f"gamma"]
++        growth_parameter = block["bias_parameters", "gamma"]
+     else:
+-        gamma = 1.0
++        # This value is ignored in the standard-GR mode.  In use_fhat mode
++        # it is replaced by the independently sampled value for each bin.
++        growth_parameter = 1.0
+         
+     log_Pk = np.log(block[names.matter_power_lin, "p_k"])
+     log_k_h = np.log(block[names.matter_power_lin, "k_h"])
+@@ -214,49 +243,51 @@ def execute(block, config):
+             gamma3 = 1.0
+         a_vir = block["bias_parameters", f"a_vir_bin_{b}"]
+ 
+-        params.append((b1, b2, gamma2, gamma3, a_vir, gamma, z_index, H_z, DA_z))
+-        
+-
+-    # Run wedges
+-    # Need fork. Using spawn launches the whole cosmosis process
+-    mp_context = multiprocessing.get_context("fork")
+-
+-    # Queue to get results back from the process
+-    q = multiprocessing.Queue()
+-
+-    # Create the process
+-    proc = mp_context.Process(target=run_wedges, 
+-                              args=(q, config, h, omdm, omb, omv, omk, omnuh2, nnu, w, wa, 
+-                                    z_Pk, log_k_h, log_Pk,
+-                                    growth, sigma8,
+-                                    params))
+-    proc.start()
+-    try:
+-        # Wait for results to show up in the queue
+-        result = q.get(block=True, timeout=config["timeout"])
+-    except queue.Empty:
+-        print(f"wedges module timed out after {config['timeout']} s. Attempting to tell process to stop.", file=sys.stderr, flush=True)
+-        # os.kill(proc.pid, signal.SIGTERM)
+-        proc.join(0.5)
+-        if proc.is_alive():
+-            print("Wedges process is not cooperating. Terminating it.", file=sys.stderr, flush=True)
+-            proc.terminate()
+-            proc.join(0.5)
+-            if proc.exitcode is None:
+-                print("So you have choosen death.", file=sys.stderr, flush=True)
+-                proc.kill()
+-        return 1
+-
+-    proc.join(0.5)
+-    if proc.is_alive():
+-        print("Wedges process is not cooperating. Terminating it.", file=sys.stderr, flush=True)
+-        proc.terminate()
+-        proc.join(0.5)
+-        if proc.exitcode is None:
+-            print("So you have choosen death.", file=sys.stderr, flush=True)
+-            proc.kill()
+-
+-    proc.close()
++        if config["use_fhat"]:
++            bin_growth_parameter = block[
++                config["fhat_section"], f"fhat_bin_{b}"
++            ]
++        else:
++            bin_growth_parameter = growth_parameter
++
++        params.append((b1, b2, gamma2, gamma3, a_vir,
++                       bin_growth_parameter, z_index, H_z, DA_z))
++
++
++    run_args = (
++        config, h, omdm, omb, omv, omk, omnuh2, nnu, w, wa,
++        z_Pk, log_k_h, log_Pk, growth, sigma8, params
++    )
++
++    if config["fork_wedges"]:
++        # The subprocess provides a hard timeout for serial/MPI runs.  It must
++        # be disabled for CosmoSIS --smp workers because multiprocessing pool
++        # workers are daemonic and cannot create child processes themselves.
++        mp_context = multiprocessing.get_context("fork")
++        q = mp_context.Queue()
++        proc = mp_context.Process(target=run_wedges, args=(q, *run_args))
++        proc.start()
++        timed_out = False
++        try:
++            result = q.get(block=True, timeout=config["timeout"])
++        except queue.Empty:
++            timed_out = True
++            print(
++                f"wedges module timed out after {config['timeout']} s; "
++                "marking this numerically non-evaluable point invalid.",
++                file=sys.stderr,
++                flush=True,
++            )
++        finally:
++            _stop_wedges_process(proc)
++            proc.close()
++            q.close()
++            q.join_thread()
++
++        if timed_out:
++            return 1
++    else:
++        result = run_wedges(None, *run_args)
+ 
+     # Put the results into the datablock
+     for i, zm in enumerate(config["zm"]):
+@@ -293,7 +324,9 @@ def execute(block, config):
+ 
+     if config["compute_lss_parameters"]:
+         z = block[names.growth_parameters, "z"]
+-        fsigma_8 = scipy.interpolate.InterpolatedUnivariateSpline(z, block[names.growth_parameters, "fsigma_8"])
++        fsigma_8 = scipy.interpolate.InterpolatedUnivariateSpline(
++            z, block[names.growth_parameters, "fsigma_8"]
++        )
+         
+         z_background = block[names.distances, "z"]
+         F_AP = scipy.interpolate.InterpolatedUnivariateSpline(z_background, block[names.distances, "F_AP"])
+@@ -304,7 +337,12 @@ def execute(block, config):
+ 
+             block["lss_parameters", f"rs_DV_bin_{b}"] = float(rs_DV(zm))
+             block["lss_parameters", f"F_AP_bin_{b}"] = float(F_AP(zm))
+-            block["lss_parameters", f"fsigma_8_bin_{b}"] = float(fsigma_8(zm))
++            if config["use_fhat"]:
++                block["lss_parameters", f"fsigma_8_bin_{b}"] = block[
++                    config["fhat_section"], f"fhat_bin_{b}"
++                ]
++            else:
++                block["lss_parameters", f"fsigma_8_bin_{b}"] = float(fsigma_8(zm))
+ 
+     return 0
+ 

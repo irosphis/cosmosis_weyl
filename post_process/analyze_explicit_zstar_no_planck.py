@@ -16,12 +16,12 @@ from scipy.stats import chi2
 
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "analysis/explicit_zstar_no_planck_20260818"
+OUT = ROOT / "analysis/explicit_zstar_no_planck"
 CHAIN_PATH = ROOT / "chain/chain_explicit_zstar_no_planck_nautilus.txt"
 CHECKPOINT_PATH = ROOT / "chain/chain_explicit_zstar_no_planck_nautilus.sampler_status.hdf5"
 REPARAMETERIZED_NO_PATH = ROOT / "chain/chain_reparameterized_no_planck_nautilus.txt"
 ZSTAR_WITH_PATH = ROOT / "chain/chain_explicit_zstar_with_planck_nautilus.txt"
-BESTFIT_DIR = ROOT / "kcap/output/analysis_explicit_zstar_no_planck_maxlike_20260818"
+BESTFIT_DIR = ROOT / "kcap/output/analysis_explicit_zstar_no_planck_maxlike"
 
 
 @dataclass

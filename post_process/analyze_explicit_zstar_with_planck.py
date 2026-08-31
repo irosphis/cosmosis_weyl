@@ -16,7 +16,7 @@ from scipy.stats import chi2
 
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "analysis/explicit_zstar_with_planck_20260813"
+OUT = ROOT / "analysis/explicit_zstar_with_planck"
 ZSTAR_PATH = ROOT / "chain/chain_explicit_zstar_with_planck_nautilus.txt"
 REPARAMETERIZED_PATH = ROOT / "chain/chain_reparameterized_with_planck_nautilus.txt"
 BESTFIT = OUT / "bestfit"

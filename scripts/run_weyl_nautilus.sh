@@ -6,11 +6,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 KCAP_DIR="${REPO_DIR}/kcap"
 # COSMOSIS_BIN_OVERRIDE can be used after moving the environment.
-COSMOSIS_BIN="${COSMOSIS_BIN_OVERRIDE:-/home/wzx/miniconda3/envs/cosmosis_weyl/bin/cosmosis}"
+COSMOSIS_BIN="${COSMOSIS_BIN_OVERRIDE:-cosmosis}"
 MPI_RANKS="${MPI_RANKS:-16}"
-CHAIN_FILE="${CHAIN_FILE:-${REPO_DIR}/chain/chain_reparameterized_with_planck_nautilus.txt}"
-PROGRESS_LOG="${PROGRESS_LOG:-${KCAP_DIR}/output/nautilus_reparameterized_with_planck_20260808.log}"
-INI_FILE="${INI_FILE:-${REPO_DIR}/config/pipeline2x2pt_weyl_reparameterized_with_planck.ini}"
+CHAIN_FILE="${CHAIN_FILE:-${REPO_DIR}/chain/chain_explicit_zstar_with_planck_nautilus.txt}"
+PROGRESS_LOG="${PROGRESS_LOG:-${KCAP_DIR}/output/nautilus_explicit_zstar_with_planck.log}"
+INI_FILE="${INI_FILE:-${REPO_DIR}/config/pipeline2x2pt_weyl_explicit_zstar_with_planck.ini}"
 # Leave empty for the prior file named by the pipeline.  A relative path is
 # interpreted from KCAP_DIR, matching CosmoSIS's handling of pipeline paths.
 PRIORS_FILE="${PRIORS_FILE:-}"

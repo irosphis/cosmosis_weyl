@@ -1,14 +1,53 @@
+# Local environments and editor state
 .env/
-output/
 conda-env/
+.venv/
 .vscode/
+.idea/
+.DS_Store
+
+# Python caches and test artefacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.coverage
+
+# Runtime products.  Chains/checkpoints are large scientific artefacts and
+# are catalogued by checksum in chain/ instead of being committed.
+output/
+/chains/
+MyTest/chains/*
+/chain/*
+!/chain/README.md
+!/chain/manifest.sha256
+*.sampler_status.hdf5
+*.hdf5
+*.log
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+screenlog.*
+core
+core.*
+
+# Local analysis scripts and generated results.
+analysis/
+figures/
+release/
+CURRENT_ANALYSIS_SUMMARY_ZH.md
+
+# Reference papers are local reading material, not project source.
+paper/*.pdf
+paper/*.zip
+paper/weyl_paper-main/
+
+# Large survey inputs are supplied separately from source control.
+*.fits
+
+# These are independent Git repositories with their own ignore policies.
 kcap/
 kcap_boss_module/
 cosmosis-standard-library/
-__pycache__/
-/chains/
-MyTest/chains/*
-!MyTest/chains/chain_noprior.txt
-!MyTest/chains/chain_withprior.txt
-*.fits
-*.hdf5
