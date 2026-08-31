@@ -24,7 +24,7 @@ and BOSS spectroscopic wedges. The original Git history is retained.
 - `patches/`: the small BOSS-wedges interface patch required by this analysis;
 - `post_process/`: the final chain-analysis and plotting scripts, which write
   generated plots to `figures/`;
-- `chain/`: chain catalogue and checksums;
+- `chain/`: checksum manifest for the completed chains;
 - `pipeline.png`: the current CosmoSIS module flow chart.
 
 ## Setup and test

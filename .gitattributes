@@ -1,11 +1,4 @@
 /CURRENT_ANALYSIS_SUMMARY_ZH.md export-ignore
-/MIGRATION.md export-ignore
-/WEYL_RUNTIME.md export-ignore
-/MyTest export-ignore
 /analysis export-ignore
-/chains export-ignore
-/des-y3-maglim-ini-files export-ignore
-/desy3.dot export-ignore
-/desy3.png export-ignore
 /paper export-ignore
 *.patch -whitespace

@@ -21,7 +21,6 @@ output/
 /chains/
 MyTest/chains/*
 /chain/*
-!/chain/README.md
 !/chain/manifest.sha256
 *.sampler_status.hdf5
 *.hdf5
