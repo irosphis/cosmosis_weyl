@@ -1,0 +1,67 @@
+Third-party software and prior work
+===================================
+
+cosmosis_weyl
+--------------
+
+This repository is derived from the cosmosis_weyl repository by Isaac
+Tutusaus and collaborators:
+
+https://github.com/itutusaus/cosmosis_weyl
+
+The original Git history and attribution are retained. The upstream
+repository does not contain a repository-wide license file at the revision
+from which this fork was developed. This notice does not assign a new license
+to files inherited from that repository. Users should consult the original
+authors concerning reuse of those files.
+
+KCAP
+----
+
+The analysis depends on the KiDS Cosmology Analysis Pipeline at revision
+36b40c5:
+
+https://github.com/KiDS-WL/kcap
+
+KCAP is not redistributed in this release archive. The setup script makes a
+local NumPy compatibility change after the user clones KCAP. KCAP and its
+bundled components remain subject to their own notices and terms.
+
+kcap_boss_module
+----------------
+
+The BOSS-wedges extension is supplied as a patch against revision 0e894a7 of:
+
+https://github.com/KiDS-WL/kcap_boss_module
+
+The upstream kcap_boss_module is distributed under the following MIT License:
+
+MIT License
+
+Copyright (c) 2021 Tilman Troester
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Other dependencies
+------------------
+
+CosmoSIS, CAMB, Nautilus, and the other packages listed in
+environment-weyl.yml are installed separately and are not redistributed in
+this release. They remain subject to their respective licenses and citation
+requirements.

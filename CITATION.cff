@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite this release and the papers listed in the accompanying manuscript."
+title: "KiDS--BOSS Weyl-potential analysis"
+version: 1.0.0
+date-released: 2026-09-01
+type: software
+authors:
+  - given-names: Xu-Wei
+    family-names: Zhang
+  - given-names: Ming
+    family-names: Zhang
+  - given-names: Yun-Liang
+    family-names: Ren
+  - given-names: Xiao-Feng
+    family-names: Yang
+repository-code: "https://github.com/irosphis/cosmosis_weyl"
+url: "https://github.com/irosphis/cosmosis_weyl/releases/tag/v1.0.0"
+abstract: "CosmoSIS modules, configurations, and post-processing scripts for a joint KiDS-1000, BOSS, and 2dFLenS analysis of the Weyl-potential evolution and the E_G statistic."
+keywords:
+  - cosmology
+  - weak gravitational lensing
+  - galaxy clustering
+  - Weyl potential
+  - CosmoSIS

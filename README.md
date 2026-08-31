@@ -58,6 +58,14 @@ because of their size. Their filenames and SHA-256 checksums are listed in
 [`chain/`](chain/). Place the chains there before running the scripts in
 `post_process/`.
 
+## Citation and third-party software
+
+Citation metadata are provided in [`CITATION.cff`](CITATION.cff). Fork
+attribution, dependency revisions, and the license notice for the modified
+BOSS interface are recorded in [`THIRD_PARTY_NOTICES`](THIRD_PARTY_NOTICES).
+This release does not assign a new blanket license to files inherited from
+the upstream `cosmosis_weyl` repository.
+
 ## Version
 
 This is the source layout for release `v1.0.0`.
