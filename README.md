@@ -58,14 +58,29 @@ because of their size. Their filenames and SHA-256 checksums are listed in
 [`chain/`](chain/). Place the chains there before running the scripts in
 `post_process/`.
 
-## Citation and third-party software
+## Citation
 
-Citation metadata are provided in [`CITATION.cff`](CITATION.cff). Fork
-attribution, dependency revisions, and the license notice for the modified
-BOSS interface are recorded in [`THIRD_PARTY_NOTICES`](THIRD_PARTY_NOTICES).
-This release does not assign a new blanket license to files inherited from
-the upstream `cosmosis_weyl` repository.
+This repository accompanies:
 
-## Version
+Xuwei Zhang, Ming Zhang, Yunliang Ren, and Xiaofeng Yang, "Measurement of
+the Weyl Potential Evolution and $E_G$ Statistic from KiDS-1000, BOSS and
+2dFLenS," [arXiv:2604.24631](https://arxiv.org/abs/2604.24631), 2026.
 
-This is the source layout for release `v1.0.0`.
+```bibtex
+@article{zhang2026weyl,
+  title = {Measurement of the Weyl Potential Evolution and {$E_G$} Statistic from {KiDS-1000}, {BOSS} and {2dFLenS}},
+  author = {Zhang, Xuwei and Zhang, Ming and Ren, Yunliang and Yang, Xiaofeng},
+  year = {2026},
+  eprint = {2604.24631},
+  archivePrefix = {arXiv},
+  primaryClass = {astro-ph.CO},
+  doi = {10.48550/arXiv.2604.24631}
+}
+```
+
+Machine-readable citation metadata are provided in
+[`CITATION.cff`](CITATION.cff). Fork attribution, dependency revisions, and
+the license notice for the modified BOSS interface are recorded in
+[`THIRD_PARTY_NOTICES`](THIRD_PARTY_NOTICES). This release does not assign a
+new blanket license to files inherited from the upstream `cosmosis_weyl`
+repository.

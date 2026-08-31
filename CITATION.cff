@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite this release and the papers listed in the accompanying manuscript."
+message: "If you use this software, please cite the accompanying paper."
 title: "KiDS--BOSS Weyl-potential analysis"
 version: 1.0.0
 date-released: 2026-09-01
@@ -22,3 +22,18 @@ keywords:
   - galaxy clustering
   - Weyl potential
   - CosmoSIS
+preferred-citation:
+  type: article
+  authors:
+    - given-names: Xuwei
+      family-names: Zhang
+    - given-names: Ming
+      family-names: Zhang
+    - given-names: Yunliang
+      family-names: Ren
+    - given-names: Xiaofeng
+      family-names: Yang
+  title: "Measurement of the Weyl Potential Evolution and E_G Statistic from KiDS-1000, BOSS and 2dFLenS"
+  year: 2026
+  doi: "10.48550/arXiv.2604.24631"
+  url: "https://arxiv.org/abs/2604.24631"
