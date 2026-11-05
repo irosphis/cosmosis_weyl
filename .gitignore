@@ -15,13 +15,11 @@ __pycache__/
 .ipynb_checkpoints/
 .coverage
 
-# Runtime products.  Chains/checkpoints are large scientific artefacts and
-# are catalogued by checksum in chain/ instead of being committed.
+# Runtime products and locally downloaded chains.
 output/
 /chains/
 MyTest/chains/*
 /chain/*
-!/chain/manifest.sha256
 *.sampler_status.hdf5
 *.hdf5
 *.log
@@ -32,8 +30,18 @@ screenlog.*
 core
 core.*
 
-# Local analysis scripts and generated results.
-analysis/
+# Keep only the published prior-sensitivity results.
+/analysis/*
+!/analysis/prior_sensitivity/
+/analysis/prior_sensitivity/*
+!/analysis/prior_sensitivity/correlations.csv
+!/analysis/prior_sensitivity/posterior_summary.csv
+!/analysis/prior_sensitivity/correlation_heatmap.pdf
+!/analysis/prior_sensitivity/correlation_heatmap.png
+!/analysis/prior_sensitivity/parameter_correlations.pdf
+!/analysis/prior_sensitivity/parameter_correlations.png
+!/analysis/prior_sensitivity/constraint_comparison.pdf
+!/analysis/prior_sensitivity/constraint_comparison.png
 figures/
 release/
 CURRENT_ANALYSIS_SUMMARY_ZH.md
