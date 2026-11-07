@@ -212,7 +212,7 @@ def heatmap():
             ax.text(j, i, f"{value:+.2f}", ha="center", va="center",
                     fontsize=13, color="white" if abs(value) > 0.55 else "#222222")
     colorbar = fig.colorbar(im, ax=axes, shrink=0.78, pad=0.035)
-    colorbar.set_label(r"Weighted Pearson correlation $r$", labelpad=10)
+    colorbar.set_label(r"Pearson correlation", labelpad=10)
     colorbar.set_ticks([-1, -0.5, 0, 0.5, 1])
     colorbar.outline.set_visible(False)
     for suffix in ["png", "pdf"]:
